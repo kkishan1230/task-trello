@@ -9,4 +9,20 @@ export const theme = createTheme({
       },
     },
   },
+  typography: {
+    button: {
+      textTransform: "none",
+    },
+  },
+});
+
+export const themeForTextField = createTheme({
+  components: {
+    MuiTextField: {
+      defaultProps: {
+        disableElevation: true,
+        disableRipple: true,
+      },
+    },
+  },
 });

@@ -1,6 +1,11 @@
 import { createTheme } from "@mui/material";
 
 export const theme = createTheme({
+  palette: {
+    warning: {
+      main: "rgb(255,0,0)",
+    },
+  },
   components: {
     MuiButton: {
       defaultProps: {

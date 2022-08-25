@@ -1,4 +1,4 @@
-import { Button, TextField } from "@mui/material";
+import { Button, TextareaAutosize, TextField } from "@mui/material";
 import styled from "@emotion/styled";
 import { Box } from "@mui/system";
 
@@ -32,5 +32,8 @@ export const TextStyle = styled(TextField)({
 export const CardContainerFlex = styled(Box)({
   display: "flex",
   gap: 20,
-  overflow: "scroll",
+});
+
+export const AbsoluteContainer = styled(Box)({
+  position: "absolute",
 });

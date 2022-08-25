@@ -7,6 +7,7 @@ export const SliceActions = createSlice({
     titles: null,
     addTitle: "",
     allData: null,
+    addButton: false,
   },
   reducers: {
     show: (state) => {
@@ -24,8 +25,12 @@ export const SliceActions = createSlice({
     allData: (state, action) => {
       state.allData = action.payload;
     },
+    addButton: (state) => {
+      state.addButton = !state.addButton;
+    },
   },
 });
 
-export const { show, hide, titleData, addTitle } = SliceActions.actions;
+export const { show, hide, titleData, addTitle, addButton } =
+  SliceActions.actions;
 export default SliceActions.reducer;

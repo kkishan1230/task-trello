@@ -1,4 +1,4 @@
-import { Add, Close, Delete } from "@mui/icons-material";
+import { Add, Close, Delete, Edit } from "@mui/icons-material";
 import {
   Button,
   IconButton,
@@ -12,8 +12,13 @@ import {
   AddCardButton,
   CardContainer,
   CardContainerFlex,
+  PaperCard,
 } from "../../styles/InputCards/Styles";
-import { addButton } from "../../allStates/SliceActions";
+import {
+  addButton,
+  addCardTitle,
+  darkFilter,
+} from "../../allStates/SliceActions";
 
 function TitlesHead() {
   const dispatch = useDispatch();
@@ -24,17 +29,33 @@ function TitlesHead() {
   const addCard = useSelector((state) => {
     return state.inputStates.addButton;
   });
+  const extra = useSelector((state) => {
+    return state.inputStates.addCardTitle;
+  });
 
   useEffect(() => {
     if (localStorage.getItem === null) {
       localStorage.setItem("Titles", JSON.stringify([]));
     } else {
       setData1(JSON.parse(localStorage.getItem("Titles")));
+      if (data1 !== null && data1.length !== 0) {
+        var obj = data1[0].addCardTitles;
+        console.log(obj);
+      }
     }
   }, [selector]);
   const [state, setState] = useState(false);
   const [data1, setData1] = useState([]);
   const [key, setKey] = useState(0);
+
+  // functions
+
+  const addCardTitlesToLS = (dt) => {
+    dt.addCardTitles.push(extra);
+    data1[dt.Id - 1] = dt;
+    localStorage.setItem("Titles", JSON.stringify(data1));
+    setData1(data1);
+  };
 
   return (
     data1 !== null && (
@@ -43,27 +64,48 @@ function TitlesHead() {
           return (
             <form key={dt.Id.toString()}>
               <CardContainer>
-                <TextField
-                  variant={!state ? "standard" : "outlined"}
-                  className="text-withoutBorder"
-                  onFocus={(el) => {
-                    setState(true);
-                  }}
-                  defaultValue={dt.TaskName}
-                  size="small"
-                  InputProps={{
-                    disableUnderline: true,
-                  }}
-                  sx={{
-                    padding: !state ? "8px 14px 1px 14px" : null,
-                    marginBottom: !state ? "20px" : "18px",
-                    textDecoration: "none",
-                  }}
-                />
-                <IconButton>
-                  <Delete color="warning" />
-                </IconButton>
-                {addCard && key == dt.Id ? (
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <TextField
+                    variant={!state ? "standard" : "outlined"}
+                    className="text-withoutBorder"
+                    onFocus={(el) => {
+                      setState(true);
+                    }}
+                    defaultValue={dt.TaskName}
+                    size="small"
+                    InputProps={{
+                      disableUnderline: true,
+                    }}
+                    sx={{
+                      padding: !state ? "8px 14px 1px 14px" : null,
+                      textDecoration: "none",
+                      width: "190px",
+                    }}
+                  />
+                  <IconButton>
+                    <Delete color="warning" fontSize="large" />
+                  </IconButton>
+                </div>
+                {dt.addCardTitles.map((dt) => {
+                  return (
+                    <PaperCard>
+                      {dt}
+                      <IconButton
+                        onClick={() => dispatch(darkFilter())}
+                        size="small"
+                        sx={{
+                          fontSize: "12px",
+                          position: "absolute",
+                          right: "0",
+                          top: "5px",
+                        }}
+                      >
+                        <Edit />
+                      </IconButton>
+                    </PaperCard>
+                  );
+                })}
+                {addCard && key === dt.Id ? (
                   <>
                     <Paper
                       sx={{
@@ -71,6 +113,9 @@ function TitlesHead() {
                       }}
                     >
                       <TextareaAutosize
+                        onChange={(el) => {
+                          dispatch(addCardTitle(el.target.value));
+                        }}
                         placeholder="Enter a title for this card..."
                         style={{
                           maxWidth: "188px",
@@ -89,6 +134,7 @@ function TitlesHead() {
                       variant="contained"
                       onClick={() => {
                         dispatch(addButton());
+                        addCardTitlesToLS(dt);
                       }}
                     >
                       Add Card
@@ -105,7 +151,7 @@ function TitlesHead() {
                   <>
                     <AddCardButton
                       startIcon={<Add />}
-                      onClick={(el) => {
+                      onClick={() => {
                         setState(!state);
                         dispatch(addButton());
                         setKey(dt.Id);

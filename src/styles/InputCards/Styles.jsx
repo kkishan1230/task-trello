@@ -1,4 +1,4 @@
-import { Button, TextareaAutosize, TextField } from "@mui/material";
+import { Button, Paper, TextareaAutosize, TextField } from "@mui/material";
 import styled from "@emotion/styled";
 import { Box } from "@mui/system";
 
@@ -36,4 +36,10 @@ export const CardContainerFlex = styled(Box)({
 
 export const AbsoluteContainer = styled(Box)({
   position: "absolute",
+});
+
+export const PaperCard = styled(Paper)({
+  padding: "12px 5px",
+  margin: 5,
+  position: "relative",
 });

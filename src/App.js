@@ -19,6 +19,9 @@ var data = [];
 //
 
 function App() {
+  const darkFilter = useSelector((state) => {
+    return state.inputStates.darkFilter;
+  });
   const selec = useSelector((state) => {
     return state.inputStates.titles;
   });
@@ -39,27 +42,44 @@ function App() {
   });
   const dispatch = useDispatch();
   return (
-    <div className="App">
-      <ThemeProvider theme={theme}>
-        <FlexContainer>
-          <CompletedTitles />
-          <Container>
-            <AddButton
-              sx={{
-                height: "40px",
-              }}
-              startIcon={<Add />}
-              onClick={() => dispatch(show())}
-            >
-              Add List
-            </AddButton>
-            <InputCardStyle display={selector ? "none" : "inline"}>
-              <InputCard />
-            </InputCardStyle>
-          </Container>
-        </FlexContainer>
-      </ThemeProvider>
-    </div>
+    <>
+      <div
+        style={{
+          width: !darkFilter ? "100vw" : "0",
+          height: !darkFilter ? "100vh" : "0",
+          backgroundColor: "rgba(0,0,0,0.5)",
+          position: "absolute",
+          top: "0",
+        }}
+      ></div>
+
+      <div
+        className="App"
+        style={{
+          filter: darkFilter ? "brightness(100%)" : "brightness(50%)",
+        }}
+      >
+        <ThemeProvider theme={theme}>
+          <FlexContainer>
+            <CompletedTitles />
+            <Container>
+              <AddButton
+                sx={{
+                  height: "40px",
+                }}
+                startIcon={<Add />}
+                onClick={() => dispatch(show())}
+              >
+                Add List
+              </AddButton>
+              <InputCardStyle display={selector ? "none" : "inline"}>
+                <InputCard />
+              </InputCardStyle>
+            </Container>
+          </FlexContainer>
+        </ThemeProvider>
+      </div>
+    </>
   );
 }
 

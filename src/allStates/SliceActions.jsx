@@ -8,6 +8,8 @@ export const SliceActions = createSlice({
     addTitle: "",
     allData: null,
     addButton: false,
+    addCardTitle: null,
+    darkFilter: false,
   },
   reducers: {
     show: (state) => {
@@ -28,9 +30,22 @@ export const SliceActions = createSlice({
     addButton: (state) => {
       state.addButton = !state.addButton;
     },
+    addCardTitle: (state, action) => {
+      state.addCardTitle = action.payload;
+    },
+    darkFilter: (state) => {
+      state.darkFilter = !state.darkFilter;
+    },
   },
 });
 
-export const { show, hide, titleData, addTitle, addButton } =
-  SliceActions.actions;
+export const {
+  show,
+  hide,
+  titleData,
+  addTitle,
+  addButton,
+  addCardTitle,
+  darkFilter,
+} = SliceActions.actions;
 export default SliceActions.reducer;

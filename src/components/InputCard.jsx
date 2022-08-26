@@ -35,6 +35,7 @@ function InputCard() {
           var x = {};
           x.Id = data.length + 1;
           x.TaskName = selector;
+          x["addCardTitles"] = [];
           data.push(x);
           localStorage.setItem("Titles", JSON.stringify(data));
           dispatch(hide());

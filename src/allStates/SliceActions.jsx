@@ -8,8 +8,9 @@ export const SliceActions = createSlice({
     addTitle: "",
     allData: null,
     addButton: false,
-    addCardTitle: null,
+    addCardTitle: {},
     darkFilter: false,
+    dataFromClick: "",
   },
   reducers: {
     show: (state) => {
@@ -31,10 +32,13 @@ export const SliceActions = createSlice({
       state.addButton = !state.addButton;
     },
     addCardTitle: (state, action) => {
-      state.addCardTitle = action.payload;
+      state.addCardTitle["id"] = action.payload;
     },
     darkFilter: (state) => {
       state.darkFilter = !state.darkFilter;
+    },
+    dataFromClick: (state, action) => {
+      state.dataFromClick = action.payload;
     },
   },
 });
@@ -47,5 +51,6 @@ export const {
   addButton,
   addCardTitle,
   darkFilter,
+  dataFromClick,
 } = SliceActions.actions;
 export default SliceActions.reducer;

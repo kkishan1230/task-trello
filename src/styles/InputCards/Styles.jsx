@@ -7,7 +7,10 @@ export const CardContainer = styled(Box)({
   height: "fit-content",
   borderRadius: 5,
   backgroundColor: "rgb(208, 208, 208)",
-  padding: 5,
+  padding: " 1rem",
+  display: "flex",
+  flexDirection: "column",
+  gap: "1rem",
 });
 
 export const AddCardButton = styled(Button)({

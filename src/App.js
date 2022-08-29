@@ -43,22 +43,7 @@ function App() {
   const dispatch = useDispatch();
   return (
     <>
-      <div
-        style={{
-          width: !darkFilter ? "100vw" : "0",
-          height: !darkFilter ? "100vh" : "0",
-          backgroundColor: "rgba(0,0,0,0.5)",
-          position: "absolute",
-          top: "0",
-        }}
-      ></div>
-
-      <div
-        className="App"
-        style={{
-          filter: darkFilter ? "brightness(100%)" : "brightness(50%)",
-        }}
-      >
+      <div className="App">
         <ThemeProvider theme={theme}>
           <FlexContainer>
             <CompletedTitles />

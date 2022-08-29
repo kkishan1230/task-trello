@@ -5,3 +5,6 @@
   margin: 0;
   padding: 0;
 }
+.react-datepicker__input-container input {
+  display: none !important;
+}

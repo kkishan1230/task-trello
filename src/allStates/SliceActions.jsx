@@ -11,6 +11,10 @@ export const SliceActions = createSlice({
     addCardTitle: {},
     darkFilter: false,
     dataFromClick: "",
+    deadLine: null,
+    titleData: null,
+    memberMail: "",
+    allMembers: [],
   },
   reducers: {
     show: (state) => {
@@ -19,8 +23,8 @@ export const SliceActions = createSlice({
     hide: (state) => {
       state.show = !state.show;
     },
-    titleData: (state) => {
-      state.titles = JSON.parse(localStorage.getItem("Titles"));
+    titleData: (state, action) => {
+      state.titleData = action.payload;
     },
     addTitle: (state, action) => {
       state.addTitle = action.payload;
@@ -40,6 +44,15 @@ export const SliceActions = createSlice({
     dataFromClick: (state, action) => {
       state.dataFromClick = action.payload;
     },
+    deadLine: (state, action) => {
+      state.deadLine = action.payload;
+    },
+    memberMail: (state, action) => {
+      state.memberMail = action.payload;
+    },
+    allMembers: (state, action) => {
+      state.allMembers.push(action.payload);
+    },
   },
 });
 
@@ -52,5 +65,8 @@ export const {
   addCardTitle,
   darkFilter,
   dataFromClick,
+  deadLine,
+  memberMail,
+  allMembers,
 } = SliceActions.actions;
 export default SliceActions.reducer;

@@ -56,3 +56,9 @@ export const TransparentButton = styled(Button)({
     backgroundColor: "rgba(225,228,233,0.7)",
   },
 });
+
+export const OptionsButtons = styled(Button)({
+  color: "black",
+  textAlign: "left",
+  justifyContent: "flex-start",
+});

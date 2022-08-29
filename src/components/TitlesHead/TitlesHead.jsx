@@ -1,6 +1,5 @@
 import { Add, Close, Delete, Edit } from "@mui/icons-material";
 import {
-  Box,
   Button,
   IconButton,
   Modal,
@@ -21,6 +20,7 @@ import {
   addCardTitle,
   darkFilter,
   dataFromClick,
+  titleData,
 } from "../../allStates/SliceActions";
 import ModalContents from "../ModalContents/ModalContents";
 import { ModalFlex } from "../ModalContents/ModalContentsStyles";
@@ -113,6 +113,7 @@ function TitlesHead() {
                           onClick={(el) => {
                             dispatch(dataFromClick(el.target.textContent));
                             dispatch(darkFilter());
+                            dispatch(titleData(dt));
                           }}
                           sx={{
                             backgroundColor: "white",

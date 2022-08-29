@@ -12,9 +12,14 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { darkFilter } from "../../allStates/SliceActions";
+import {
+  darkFilter,
+  memberMail,
+  titleData,
+} from "../../allStates/SliceActions";
+import AddOptions from "./AddOptions";
 import {
   AddDesPaper,
   FlexOnly,
@@ -25,11 +30,22 @@ import {
 } from "./ModalContentsStyles";
 
 function ModalContents() {
-  const [state, setState] = useState(false);
-  const dispatch = useDispatch();
+  // Selectors
+  const allMembers = useSelector((state) => {
+    return state.inputStates.allMembers;
+  });
+  const deadLineDate = useSelector((state) => {
+    return state.inputStates.deadLine;
+  });
   const datafromClick = useSelector((state) => {
     return state.inputStates.dataFromClick;
   });
+  const dataFromLS = useSelector((state) => {
+    return state.inputStates.titleData;
+  });
+  // All states
+  const [state, setState] = useState(false);
+  const dispatch = useDispatch();
   return (
     <ModalContentBox>
       <ModalFlex alignItems="center">
@@ -55,6 +71,27 @@ function ModalContents() {
         <Typography marginLeft="50px">in list in progress</Typography>
         <RemoveRedEyeOutlined />
       </FlexOnly>
+      <FlexOnly>
+        {allMembers.length > 0 &&
+          allMembers.map((mem) => {
+            return (
+              <div
+                style={{
+                  textAlign: "center",
+                  padding: "5px",
+                  color: "white",
+                  borderRadius: "50%",
+                  background: "purple",
+                  width: "20px",
+                  height: "20px",
+                }}
+              >
+                {mem[0]}
+              </div>
+            );
+          })}
+        <div>{deadLineDate}</div>
+      </FlexOnly>
       <ModalFlex>
         <ModalFlex gap="20px">
           <SubjectOutlined
@@ -71,6 +108,7 @@ function ModalContents() {
             >
               Description
             </Typography>
+
             {state ? (
               <FlexOnly flexDirection="column" gap="10px">
                 <TextAreaForDesc
@@ -78,8 +116,19 @@ function ModalContents() {
                   autoFocus
                 />
                 <FlexOnly gap="10px">
-                  <Button variant="contained">Save</Button>
-                  <TransparentButton variant="contained">
+                  <Button
+                    variant="contained"
+                    onClick={() => {
+                      console.log(dataFromLS);
+                      dispatch(darkFilter());
+                    }}
+                  >
+                    Save
+                  </Button>
+                  <TransparentButton
+                    variant="contained"
+                    onClick={() => dispatch(darkFilter())}
+                  >
                     Cancel
                   </TransparentButton>
                 </FlexOnly>
@@ -97,6 +146,7 @@ function ModalContents() {
               </AddDesPaper>
             )}
           </ModalFlex>
+          <AddOptions />
         </ModalFlex>
       </ModalFlex>
     </ModalContentBox>

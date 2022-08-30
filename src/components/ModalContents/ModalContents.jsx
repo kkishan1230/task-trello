@@ -7,18 +7,16 @@ import {
 import {
   Button,
   IconButton,
+  Modal,
   Paper,
+  Popover,
   TextareaAutosize,
   TextField,
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  darkFilter,
-  memberMail,
-  titleData,
-} from "../../allStates/SliceActions";
+import { darkFilter } from "../../allStates/SliceActions";
 import AddOptions from "./AddOptions";
 import {
   AddDesPaper,
@@ -31,6 +29,9 @@ import {
 
 function ModalContents() {
   // Selectors
+  const open = useSelector((state) => {
+    return state.inputStates.openLabelModal;
+  });
   const allMembers = useSelector((state) => {
     return state.inputStates.allMembers;
   });
@@ -46,6 +47,7 @@ function ModalContents() {
   // All states
   const [state, setState] = useState(false);
   const dispatch = useDispatch();
+
   return (
     <ModalContentBox>
       <ModalFlex alignItems="center">

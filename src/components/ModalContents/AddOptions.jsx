@@ -3,22 +3,34 @@ import {
   PersonOutlineOutlined,
   StyleOutlined,
 } from "@mui/icons-material";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { FlexOnly, OptionsButtons } from "./ModalContentsStyles";
 import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from "react-datepicker";
 import { useDispatch, useSelector } from "react-redux";
-import { allMembers, deadLine, memberMail } from "../../allStates/SliceActions";
-import { Button, TextField } from "@mui/material";
+import {
+  allMembers,
+  deadLine,
+  openLabelModal,
+} from "../../allStates/SliceActions";
+import { Button, Popover, TextField } from "@mui/material";
+import ClickAwayListener from "@mui/material/ClickAwayListener";
+import Label from "../Label/Label";
 
 function AddOptions() {
-  const membersAllmail = useSelector((state) => {
-    return state.inputStates.allMembers;
-  });
+  const [anchEl, setAnchEl] = useState(null);
+
   const dispatch = useDispatch();
   const [state, setState] = useState(true);
   const [addMember, setAddMember] = useState(true);
   const [mail, setMail] = useState("");
+  const membersAllmail = useSelector((state) => {
+    return state.inputStates.allMembers;
+  });
+  const openPopover = useSelector((state) => {
+    return state.inputStates.openLabelModal;
+  });
+
   return (
     <FlexOnly flexDirection={"column"}>
       {addMember ? (
@@ -46,18 +58,45 @@ function AddOptions() {
           <Button
             size="small"
             variant="contained"
-            onClick={() => {
+            onClick={(el) => {
               setAddMember(!addMember);
               dispatch(allMembers(mail));
+              setMail("");
             }}
+            disabled={mail.length === 0 ? true : false}
           >
             Add Member
           </Button>
         </>
       )}
-      <OptionsButtons variant="text" startIcon={<StyleOutlined />}>
-        Add Labels
-      </OptionsButtons>
+      <>
+        <OptionsButtons
+          variant="text"
+          startIcon={<StyleOutlined />}
+          onClick={(el) => {
+            dispatch(openLabelModal());
+            setAnchEl(el.currentTarget);
+          }}
+        >
+          Add Labels
+        </OptionsButtons>
+        <Popover
+          open={Boolean(anchEl && openPopover)}
+          anchorEl={anchEl}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "center",
+          }}
+          transformOrigin={{
+            horizontal: "center",
+          }}
+          sx={{
+            width: "400px",
+          }}
+        >
+          <Label />
+        </Popover>
+      </>
       {state ? (
         <OptionsButtons
           variant="text"

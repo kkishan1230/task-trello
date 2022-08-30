@@ -15,6 +15,7 @@ export const SliceActions = createSlice({
     titleData: null,
     memberMail: "",
     allMembers: [],
+    openLabelModal: false,
   },
   reducers: {
     show: (state) => {
@@ -53,6 +54,9 @@ export const SliceActions = createSlice({
     allMembers: (state, action) => {
       state.allMembers.push(action.payload);
     },
+    openLabelModal: (state) => {
+      state.openLabelModal = !state.openLabelModal;
+    },
   },
 });
 
@@ -68,5 +72,6 @@ export const {
   deadLine,
   memberMail,
   allMembers,
+  openLabelModal,
 } = SliceActions.actions;
 export default SliceActions.reducer;

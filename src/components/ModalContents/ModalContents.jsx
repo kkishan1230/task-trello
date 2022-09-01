@@ -4,23 +4,16 @@ import {
   SubjectOutlined,
   VideoLabelOutlined,
 } from "@mui/icons-material";
-import {
-  Button,
-  IconButton,
-  Modal,
-  Paper,
-  Popover,
-  TextareaAutosize,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Button, IconButton, TextField, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { darkFilter } from "../../allStates/SliceActions";
 import AddOptions from "./AddOptions";
 import {
   AddDesPaper,
+  DeadlineButton,
   FlexOnly,
+  MembersButton,
   ModalContentBox,
   ModalFlex,
   TextAreaForDesc,
@@ -73,26 +66,42 @@ function ModalContents() {
         <Typography marginLeft="50px">in list in progress</Typography>
         <RemoveRedEyeOutlined />
       </FlexOnly>
-      <FlexOnly>
-        {allMembers.length > 0 &&
-          allMembers.map((mem) => {
-            return (
-              <div
-                style={{
-                  textAlign: "center",
-                  padding: "5px",
-                  color: "white",
-                  borderRadius: "50%",
-                  background: "purple",
-                  width: "20px",
-                  height: "20px",
-                }}
-              >
-                {mem[0]}
-              </div>
-            );
-          })}
-        <div>{deadLineDate}</div>
+      <FlexOnly
+        alignItems={"center"}
+        gap="10px"
+        marginLeft={"50px"}
+        marginTop="20px"
+      >
+        {Boolean(allMembers.length) && (
+          <FlexOnly flexDirection={"column"}>
+            <Typography fontWeight={"bold"}>Members</Typography>
+            <FlexOnly gap="5px ">
+              {allMembers.length > 0 &&
+                allMembers.map((mem) => {
+                  return (
+                    <MembersButton
+                      size="small"
+                      variant="contained"
+                      sx={{
+                        textAlign: "center",
+                        color: "white",
+                        // borderRadius: "50%",
+                        background: "purple",
+                      }}
+                    >
+                      {mem[0]}
+                    </MembersButton>
+                  );
+                })}
+            </FlexOnly>
+          </FlexOnly>
+        )}
+        {Boolean(deadLineDate) && (
+          <FlexOnly flexDirection={"column"}>
+            <Typography fontWeight={"bold"}>Due Date</Typography>
+            <DeadlineButton>{deadLineDate}</DeadlineButton>
+          </FlexOnly>
+        )}
       </FlexOnly>
       <ModalFlex>
         <ModalFlex gap="20px">

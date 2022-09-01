@@ -32,8 +32,6 @@ function App() {
     ) {
       data = JSON.stringify(data);
       localStorage.setItem("Titles", data);
-    } else {
-      dispatch(titleData());
     }
   }, []);
 

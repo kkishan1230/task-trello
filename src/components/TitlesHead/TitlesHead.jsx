@@ -6,7 +6,6 @@ import {
   Paper,
   TextareaAutosize,
   TextField,
-  Typography,
 } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,9 +16,9 @@ import {
 } from "../../styles/InputCards/Styles";
 import {
   addButton,
-  addCardTitle,
   darkFilter,
   dataFromClick,
+  dataOfTable,
   titleData,
 } from "../../allStates/SliceActions";
 import ModalContents from "../ModalContents/ModalContents";
@@ -47,19 +46,27 @@ function TitlesHead() {
       localStorage.setItem("Titles", JSON.stringify([]));
     } else {
       setData1(JSON.parse(localStorage.getItem("Titles")));
-      if (data1 !== null && data1.length !== 0) {
-        var obj = data1[0].addCardTitles;
-      }
     }
   }, [selector]);
   const [state, setState] = useState(false);
   const [data1, setData1] = useState([]);
   const [key, setKey] = useState(0);
+  const [titleText, setTitleText] = useState("");
 
   // functions
+  const addToLS = (dt) => {
+    var x = titleText;
+    var y = { TitleName: titleText };
+    y["id"] = dt.addCardTitles.length + 1;
+    dt.addCardTitles.push(y);
+    var LsData = JSON.parse(localStorage.getItem("Titles"));
+    LsData[dt.Id - 1] = dt;
+    localStorage.setItem("Titles", JSON.stringify(LsData));
+  };
 
   const addCardTitlesToLS = (dt) => {
-    dt.addCardTitles.push(extra.id);
+    console.log(extra);
+    // dt.addCardTitles.push(extra);
     data1[dt.Id - 1] = dt;
     localStorage.setItem("Titles", JSON.stringify(data1));
     setData1(data1);
@@ -113,7 +120,10 @@ function TitlesHead() {
                           onClick={(el) => {
                             dispatch(dataFromClick(el.target.textContent));
                             dispatch(darkFilter());
-                            dispatch(titleData(dt));
+                            data.member = [];
+
+                            dispatch(titleData(data));
+                            dispatch(dataOfTable(dt));
                           }}
                           sx={{
                             backgroundColor: "white",
@@ -124,7 +134,7 @@ function TitlesHead() {
                             cursor: "pointer",
                           }}
                         >
-                          {data}
+                          {data.TitleName}
                         </Paper>
                       </div>
                     );
@@ -139,7 +149,8 @@ function TitlesHead() {
                         >
                           <TextareaAutosize
                             onChange={(el) => {
-                              dispatch(addCardTitle(el.target.value));
+                              // dispatch(addCardTitle(el.target.value));
+                              setTitleText(el.target.value);
                             }}
                             placeholder="Enter a title for this card..."
                             style={{
@@ -162,6 +173,7 @@ function TitlesHead() {
                           onClick={() => {
                             dispatch(addButton());
                             addCardTitlesToLS(dt);
+                            addToLS(dt);
                           }}
                         >
                           Add Card
@@ -183,6 +195,7 @@ function TitlesHead() {
                           setState(!state);
                           dispatch(addButton());
                           setKey(dt.Id);
+                          console.log(dt);
                         }}
                         sx={{
                           padding: "0",

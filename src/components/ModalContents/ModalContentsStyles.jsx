@@ -62,3 +62,24 @@ export const OptionsButtons = styled(Button)({
   textAlign: "left",
   justifyContent: "flex-start",
 });
+
+export const MembersButton = styled(Button)({
+  maxWidth: "30px",
+  maxHeight: "30px",
+  minWidth: "30px",
+  minHeight: "30px",
+  borderRadius: "50%",
+});
+
+export const DeadlineButton = styled(Button)({
+  maxWidth: "30px",
+  maxHeight: "30px",
+  backgroundColor: "grey",
+  paddingInline: "40px",
+  color: "white",
+  width: "fit-content",
+  "&:hover": {
+    backgroundColor: "grey",
+    opacity: "0.5",
+  },
+});

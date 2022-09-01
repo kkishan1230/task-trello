@@ -72,7 +72,9 @@ function Label() {
           Easy
         </LabelButton>
         <LabelButton
-          onClick={() => dispatch(openLabelModal())}
+          onClick={() => {
+            dispatch(openLabelModal());
+          }}
           variant="contained"
           sx={{
             justifyContent: "center",

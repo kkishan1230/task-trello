@@ -16,6 +16,7 @@ export const SliceActions = createSlice({
     memberMail: "",
     allMembers: [],
     openLabelModal: false,
+    dataOfTable: null,
   },
   reducers: {
     show: (state) => {
@@ -37,7 +38,7 @@ export const SliceActions = createSlice({
       state.addButton = !state.addButton;
     },
     addCardTitle: (state, action) => {
-      state.addCardTitle["id"] = action.payload;
+      state.addCardTitle = action.payload;
     },
     darkFilter: (state) => {
       state.darkFilter = !state.darkFilter;
@@ -57,6 +58,9 @@ export const SliceActions = createSlice({
     openLabelModal: (state) => {
       state.openLabelModal = !state.openLabelModal;
     },
+    dataOfTable: (state, action) => {
+      state.dataOfTable = action.payload;
+    },
   },
 });
 
@@ -73,5 +77,6 @@ export const {
   memberMail,
   allMembers,
   openLabelModal,
+  dataOfTable,
 } = SliceActions.actions;
 export default SliceActions.reducer;

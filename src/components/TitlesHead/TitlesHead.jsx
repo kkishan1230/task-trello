@@ -25,7 +25,7 @@ import {
   dataLocal,
 } from "../../allStates/SliceActions";
 import ModalContents from "../ModalContents/ModalContents";
-import { ModalFlex } from "../ModalContents/ModalContentsStyles";
+import { FlexOnly, ModalFlex } from "../ModalContents/ModalContentsStyles";
 
 function TitlesHead() {
   const dispatch = useDispatch();
@@ -61,15 +61,6 @@ function TitlesHead() {
     x[dt.Id - 1].addCardTitles.push(y);
     localStorage.setItem("Titles", JSON.stringify(x));
     setData1(x);
-    // dt.addCardTitles.push(y);
-    // var LsData = JSON.parse(localStorage.getItem("Titles"));
-    // LsData[dt.Id - 1] = dt;
-    // localStorage.setItem("Titles", JSON.stringify(LsData));
-  };
-
-  const addCardTitlesToLS = (dt) => {
-    // data1[dt.Id - 1] = dt;
-    // localStorage.setItem("Titles", JSON.stringify(data1));
   };
 
   return (
@@ -146,12 +137,8 @@ function TitlesHead() {
                   })}
                   {addCard && key === dt.Id ? (
                     <>
-                      <ModalFlex>
-                        <Paper
-                          sx={{
-                            width: "fit-content",
-                          }}
-                        >
+                      <Paper>
+                        <ModalFlex flexDirection={"column"} gap="10px">
                           <TextareaAutosize
                             onChange={(el) => {
                               setTitleText(el.target.value);
@@ -171,31 +158,34 @@ function TitlesHead() {
                               boxShadow: "none",
                             }}
                           />
-                        </Paper>
-                        <Button
-                          variant="contained"
-                          onClick={() => {
-                            dispatch(addButton());
-                            // console.log(dt);
-                            // addCardTitlesToLS(dt);
-                            addToLS(dt);
-                            dispatch(
-                              dataLocal(
-                                JSON.parse(localStorage.getItem("Titles"))
-                              )
-                            );
-                          }}
-                        >
-                          Add Card
-                        </Button>
-                        <IconButton
-                          onClick={() => {
-                            dispatch(addButton());
-                          }}
-                        >
-                          <Close fontSize="large" />
-                        </IconButton>
-                      </ModalFlex>
+                          <FlexOnly gap={"10px"}>
+                            <Button
+                              variant="contained"
+                              onClick={() => {
+                                dispatch(addButton());
+                                addToLS(dt);
+                                dispatch(
+                                  dataLocal(
+                                    JSON.parse(localStorage.getItem("Titles"))
+                                  )
+                                );
+                              }}
+                            >
+                              Add Card
+                            </Button>
+                            <IconButton
+                              sx={{
+                                padding: "0",
+                              }}
+                              onClick={() => {
+                                dispatch(addButton());
+                              }}
+                            >
+                              <Close fontSize="large" />
+                            </IconButton>
+                          </FlexOnly>
+                        </ModalFlex>
+                      </Paper>
                     </>
                   ) : (
                     <>

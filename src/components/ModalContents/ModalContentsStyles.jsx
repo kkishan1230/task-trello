@@ -46,6 +46,10 @@ export const TextAreaForDesc = styled(TextareaAutosize)({
   minHeight: "92px",
   width: "488px",
   resize: "none",
+  padding: "20px",
+  borderRadius: "10px",
+  fontFamily: "Roboto",
+  border: "none",
 });
 
 export const TransparentButton = styled(Button)({
@@ -72,14 +76,21 @@ export const MembersButton = styled(Button)({
 });
 
 export const DeadlineButton = styled(Button)({
-  maxWidth: "30px",
+  maxWidth: "500px",
+  minWidth: "100px",
   maxHeight: "30px",
   backgroundColor: "grey",
-  paddingInline: "40px",
+  paddingInline: "30px",
   color: "white",
   width: "fit-content",
   "&:hover": {
     backgroundColor: "grey",
     opacity: "0.5",
   },
+});
+
+export const PriorityLabel = styled(Button)({
+  width: "80px",
+  height: "30px",
+  color: "white",
 });

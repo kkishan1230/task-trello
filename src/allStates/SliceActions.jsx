@@ -17,6 +17,9 @@ export const SliceActions = createSlice({
     allMembers: [],
     openLabelModal: false,
     dataOfTable: null,
+    contentId: null,
+    subContentId: null,
+    dataLocal: JSON.parse(localStorage.getItem("Titles")),
   },
   reducers: {
     show: (state) => {
@@ -61,6 +64,15 @@ export const SliceActions = createSlice({
     dataOfTable: (state, action) => {
       state.dataOfTable = action.payload;
     },
+    contentId: (state, action) => {
+      state.contentId = action.payload;
+    },
+    subContentId: (state, action) => {
+      state.subContentId = action.payload;
+    },
+    dataLocal: (state, action) => {
+      state.dataLocal = action.payload;
+    },
   },
 });
 
@@ -78,5 +90,8 @@ export const {
   allMembers,
   openLabelModal,
   dataOfTable,
+  contentId,
+  subContentId,
+  dataLocal,
 } = SliceActions.actions;
 export default SliceActions.reducer;

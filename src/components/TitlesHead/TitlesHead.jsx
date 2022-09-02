@@ -1,4 +1,4 @@
-import { Add, Close, Delete, Edit } from "@mui/icons-material";
+import { Abc, Add, Close, Delete, Edit } from "@mui/icons-material";
 import {
   Button,
   IconButton,
@@ -20,6 +20,9 @@ import {
   dataFromClick,
   dataOfTable,
   titleData,
+  contentId,
+  subContentId,
+  dataLocal,
 } from "../../allStates/SliceActions";
 import ModalContents from "../ModalContents/ModalContents";
 import { ModalFlex } from "../ModalContents/ModalContentsStyles";
@@ -36,9 +39,6 @@ function TitlesHead() {
 
   const addCard = useSelector((state) => {
     return state.inputStates.addButton;
-  });
-  const extra = useSelector((state) => {
-    return state.inputStates.addCardTitle;
   });
 
   useEffect(() => {
@@ -65,8 +65,6 @@ function TitlesHead() {
   };
 
   const addCardTitlesToLS = (dt) => {
-    console.log(extra);
-    // dt.addCardTitles.push(extra);
     data1[dt.Id - 1] = dt;
     localStorage.setItem("Titles", JSON.stringify(data1));
     setData1(data1);
@@ -75,6 +73,14 @@ function TitlesHead() {
   return (
     data1 !== null && (
       <>
+        <Modal
+          open={darkFilters}
+          onClose={() => dispatch(darkFilter())}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <ModalContents />
+        </Modal>
         <CardContainerFlex>
           {data1.map((dt) => {
             return (
@@ -108,22 +114,19 @@ function TitlesHead() {
                           display: "flex",
                         }}
                       >
-                        <Modal
-                          open={darkFilters}
-                          onClose={() => dispatch(darkFilter())}
-                          aria-labelledby="modal-modal-title"
-                          aria-describedby="modal-modal-description"
-                        >
-                          <ModalContents />
-                        </Modal>
                         <Paper
                           onClick={(el) => {
                             dispatch(dataFromClick(el.target.textContent));
                             dispatch(darkFilter());
-                            data.member = [];
-
                             dispatch(titleData(data));
                             dispatch(dataOfTable(dt));
+                            dispatch(contentId(dt.Id));
+                            dispatch(subContentId(data.id));
+                            dispatch(
+                              dataLocal(
+                                JSON.parse(localStorage.getItem("Titles"))
+                              )
+                            );
                           }}
                           sx={{
                             backgroundColor: "white",
@@ -149,7 +152,6 @@ function TitlesHead() {
                         >
                           <TextareaAutosize
                             onChange={(el) => {
-                              // dispatch(addCardTitle(el.target.value));
                               setTitleText(el.target.value);
                             }}
                             placeholder="Enter a title for this card..."
@@ -174,6 +176,11 @@ function TitlesHead() {
                             dispatch(addButton());
                             addCardTitlesToLS(dt);
                             addToLS(dt);
+                            dispatch(
+                              dataLocal(
+                                JSON.parse(localStorage.getItem("Titles"))
+                              )
+                            );
                           }}
                         >
                           Add Card

@@ -2,13 +2,41 @@ import { Check } from "@mui/icons-material";
 import { Paper, Typography } from "@mui/material";
 import { color, height } from "@mui/system";
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { openLabelModal } from "../../allStates/SliceActions";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  openLabelModal,
+  contentId,
+  subContentId,
+  dataLocal,
+} from "../../allStates/SliceActions";
 import { FlexOnly } from "../ModalContents/ModalContentsStyles";
 import { LabelButton } from "./LabelStyle";
 
 function Label() {
+  // Functions
+  const addLabel = (e) => {
+    var x = JSON.parse(localStorage.getItem("Titles"));
+    if (Boolean(x[contentId - 1].addCardTitles[subContentId - 1].priority)) {
+      x[contentId - 1].addCardTitles[subContentId - 1].priority = e;
+    } else {
+      x[contentId - 1].addCardTitles[subContentId - 1]["priority"] = e;
+    }
+    // console.log(x[contentId - 1].addCardTitles[subContentId - 1].priority);
+    localStorage.setItem("Titles", JSON.stringify(x));
+    dispatch(dataLocal(x));
+    dispatch(openLabelModal());
+  };
+
+  // actions
   const dispatch = useDispatch();
+  // selectors
+  const contentId = useSelector((state) => {
+    return state.inputStates.contentId;
+  });
+  const subContentId = useSelector((state) => {
+    return state.inputStates.subContentId;
+  });
+  // states
   const [buttonIcons, setButtonIcons] = useState({
     red: false,
     orange: false,
@@ -25,7 +53,12 @@ function Label() {
       <FlexOnly flexDirection={"column"} gap="10px">
         <LabelButton
           onClick={(state) => {
-            setButtonIcons({ ...buttonIcons, red: !buttonIcons.red });
+            setButtonIcons({
+              orange: false,
+              red: true,
+              green: false,
+            });
+            addLabel("Urgent");
           }}
           endIcon={buttonIcons.red && <Check />}
           variant="contained"
@@ -41,7 +74,8 @@ function Label() {
         </LabelButton>
         <LabelButton
           onClick={() => {
-            setButtonIcons({ ...buttonIcons, orange: !buttonIcons.orange });
+            setButtonIcons({ orange: true, red: false, green: false });
+            addLabel("Medium");
           }}
           endIcon={buttonIcons.orange && <Check />}
           variant="contained"
@@ -57,7 +91,8 @@ function Label() {
         </LabelButton>
         <LabelButton
           onClick={() => {
-            setButtonIcons({ ...buttonIcons, green: !buttonIcons.green });
+            setButtonIcons({ orange: false, red: false, green: true });
+            addLabel("Easy");
           }}
           endIcon={buttonIcons.green && <Check />}
           variant="contained"
@@ -70,17 +105,6 @@ function Label() {
           }}
         >
           Easy
-        </LabelButton>
-        <LabelButton
-          onClick={() => {
-            dispatch(openLabelModal());
-          }}
-          variant="contained"
-          sx={{
-            justifyContent: "center",
-          }}
-        >
-          Save
         </LabelButton>
       </FlexOnly>
     </Paper>

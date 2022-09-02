@@ -7,7 +7,7 @@ import {
 import { Button, IconButton, TextField, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { darkFilter } from "../../allStates/SliceActions";
+import { darkFilter, dataLocal } from "../../allStates/SliceActions";
 import AddOptions from "./AddOptions";
 import {
   AddDesPaper,
@@ -16,30 +16,56 @@ import {
   MembersButton,
   ModalContentBox,
   ModalFlex,
+  PriorityLabel,
   TextAreaForDesc,
   TransparentButton,
 } from "./ModalContentsStyles";
 
 function ModalContents() {
+  // const dispatch = useDispatch();
+
   // Selectors
-  const open = useSelector((state) => {
-    return state.inputStates.openLabelModal;
-  });
-  const allMembers = useSelector((state) => {
-    return state.inputStates.allMembers;
-  });
-  const deadLineDate = useSelector((state) => {
-    return state.inputStates.deadLine;
-  });
+
   const datafromClick = useSelector((state) => {
     return state.inputStates.dataFromClick;
   });
-  const dataFromLS = useSelector((state) => {
-    return state.inputStates.titleData;
+
+  const contentsId = useSelector((state) => {
+    return state.inputStates.contentId;
   });
+
+  const subContentId = useSelector((state) => {
+    return state.inputStates.subContentId;
+  });
+
+  const dataLocal = useSelector((state) => {
+    return state.inputStates.dataLocal;
+  });
+  // Functions
+
+  const addDescToLS = () => {
+    var x = JSON.parse(localStorage.getItem("Titles"));
+    if (
+      Boolean(
+        x[contentsId - 1].addCardTitles[subContentId - 1].TitleDescription
+      )
+    ) {
+      x[contentsId - 1].addCardTitles[subContentId - 1].TitleDescription =
+        descText;
+    } else {
+      x[contentsId - 1].addCardTitles[subContentId - 1]["TitleDescription"] =
+        descText;
+    }
+    localStorage.setItem("Titles", JSON.stringify(x));
+  };
+
   // All states
   const [state, setState] = useState(false);
   const dispatch = useDispatch();
+  const [descText, setDescText] = useState(null);
+
+  var LabelPriorityIndicator =
+    dataLocal[contentsId - 1].addCardTitles[subContentId - 1].priority;
 
   return (
     <ModalContentBox>
@@ -72,12 +98,17 @@ function ModalContents() {
         marginLeft={"50px"}
         marginTop="20px"
       >
-        {Boolean(allMembers.length) && (
+        {Boolean(
+          dataLocal[contentsId - 1].addCardTitles[subContentId - 1].members
+        ) && (
           <FlexOnly flexDirection={"column"}>
             <Typography fontWeight={"bold"}>Members</Typography>
             <FlexOnly gap="5px ">
-              {allMembers.length > 0 &&
-                allMembers.map((mem) => {
+              {dataLocal[contentsId - 1].addCardTitles[subContentId - 1].members
+                .length > 0 &&
+                dataLocal[contentsId - 1].addCardTitles[
+                  subContentId - 1
+                ].members.map((mem) => {
                   return (
                     <MembersButton
                       size="small"
@@ -85,7 +116,6 @@ function ModalContents() {
                       sx={{
                         textAlign: "center",
                         color: "white",
-                        // borderRadius: "50%",
                         background: "purple",
                       }}
                     >
@@ -96,10 +126,49 @@ function ModalContents() {
             </FlexOnly>
           </FlexOnly>
         )}
-        {Boolean(deadLineDate) && (
+        {Boolean(
+          dataLocal[contentsId - 1].addCardTitles[subContentId - 1].dueDate
+        ) && (
           <FlexOnly flexDirection={"column"}>
             <Typography fontWeight={"bold"}>Due Date</Typography>
-            <DeadlineButton>{deadLineDate}</DeadlineButton>
+            <DeadlineButton>
+              {
+                dataLocal[contentsId - 1].addCardTitles[subContentId - 1]
+                  .dueDate
+              }
+            </DeadlineButton>
+          </FlexOnly>
+        )}
+
+        {Boolean(
+          dataLocal[contentsId - 1].addCardTitles[subContentId - 1].priority
+        ) && (
+          <FlexOnly flexDirection={"column"}>
+            <Typography fontWeight={"bold"}>Priority</Typography>
+            <PriorityLabel
+              sx={{
+                backgroundColor:
+                  LabelPriorityIndicator === "Urgent"
+                    ? "red"
+                    : LabelPriorityIndicator === "Medium"
+                    ? "orange"
+                    : "green",
+                "&:hover": {
+                  backgroundColor:
+                    LabelPriorityIndicator === "Urgent"
+                      ? "red"
+                      : LabelPriorityIndicator === "Medium"
+                      ? "orange"
+                      : "green",
+                  opacity: "0.7",
+                },
+              }}
+            >
+              {
+                dataLocal[contentsId - 1].addCardTitles[subContentId - 1]
+                  .priority
+              }
+            </PriorityLabel>
           </FlexOnly>
         )}
       </FlexOnly>
@@ -123,15 +192,26 @@ function ModalContents() {
             {state ? (
               <FlexOnly flexDirection="column" gap="10px">
                 <TextAreaForDesc
-                  placeholder="Add a more detailed description..."
+                  placeholder={
+                    Boolean(
+                      dataLocal[contentsId - 1].addCardTitles[subContentId - 1]
+                        .TitleDescription
+                    )
+                      ? dataLocal[contentsId - 1].addCardTitles[
+                          subContentId - 1
+                        ].TitleDescription
+                      : "Add a more description for the card title..."
+                  }
                   autoFocus
+                  onChange={(el) => [setDescText(el.target.value)]}
                 />
                 <FlexOnly gap="10px">
                   <Button
                     variant="contained"
                     onClick={() => {
-                      console.log(dataFromLS);
-                      dispatch(darkFilter());
+                      // dispatch(darkFilter());
+                      setState(!state);
+                      addDescToLS();
                     }}
                   >
                     Save
@@ -152,7 +232,16 @@ function ModalContents() {
                     fontSize: "14px",
                   }}
                 >
-                  Add a more Detailed Description...
+                  {Boolean(descText)
+                    ? descText
+                    : Boolean(
+                        dataLocal[contentsId - 1].addCardTitles[
+                          subContentId - 1
+                        ].TitleDescription
+                      )
+                    ? dataLocal[contentsId - 1].addCardTitles[subContentId - 1]
+                        .TitleDescription
+                    : "Add a more description for card title"}
                 </Typography>
               </AddDesPaper>
             )}
@@ -165,3 +254,11 @@ function ModalContents() {
 }
 
 export default ModalContents;
+
+// Boolean(
+//   dataLocal[contentsId - 1].addCardTitles[subContentId - 1]
+//     .TitleDescription
+// )
+//   ? dataLocal[contentsId - 1].addCardTitles[subContentId - 1]
+//       .TitleDescription
+//   : "Add a more description for card title"

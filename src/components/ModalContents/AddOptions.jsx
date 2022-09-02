@@ -9,9 +9,9 @@ import "react-datepicker/dist/react-datepicker.min.css";
 import DatePicker from "react-datepicker";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  allMembers,
   deadLine,
   openLabelModal,
+  dataLocal,
 } from "../../allStates/SliceActions";
 import { Button, Popover, TextField } from "@mui/material";
 import Label from "../Label/Label";
@@ -23,6 +23,7 @@ function AddOptions() {
   const [state, setState] = useState(true);
   const [addMember, setAddMember] = useState(true);
   const [mail, setMail] = useState("");
+  const [deadLineState, setDeadLineState] = useState(new Date());
 
   // Selectors
   const membersAllmail = useSelector((state) => {
@@ -40,7 +41,23 @@ function AddOptions() {
     return state.inputStates.dataOfTable;
   });
 
+  const deadLineDate = useSelector((state) => {
+    return state.inputStates.deadLine;
+  });
+
   // functions
+
+  const setDueDateInLS = (smallObj, bigObj, deadDate) => {
+    var x = JSON.parse(localStorage.getItem("Titles"));
+    if (Boolean(x[bigObj.Id - 1].addCardTitles[smallObj.id - 1].dueDate)) {
+      x[bigObj.Id - 1].addCardTitles[smallObj.id - 1].dueDate = deadDate;
+    } else {
+      x[bigObj.Id - 1].addCardTitles[smallObj.id - 1]["dueDate"] = deadDate;
+    }
+    // console.log(x[bigObj.Id - 1].addCardTitles[smallObj.id - 1].dueDate);
+    localStorage.setItem("Titles", JSON.stringify(x));
+    dispatch(dataLocal(x));
+  };
 
   const addMem = (LsData, tableData) => {
     var x = JSON.parse(localStorage.getItem("Titles"));
@@ -52,6 +69,7 @@ function AddOptions() {
       y.members.push(mail);
     }
     x[tableData.Id - 1].addCardTitles[LsData.id - 1] = y;
+    dispatch(dataLocal(x));
     localStorage.setItem("Titles", JSON.stringify(x));
   };
 
@@ -132,8 +150,15 @@ function AddOptions() {
           minDate={new Date()}
           open={!state}
           onChange={(startDate) => {
-            dispatch(deadLine(`${startDate.toISOString().split("T")[0]}`));
+            var dataLS = JSON.parse(localStorage.getItem("Titles"));
+            dispatch(deadLine(`${startDate.toString().slice(0, 15)}`));
+            setDeadLineState(startDate.toString().slice(0, 15));
             setState(!state);
+            setDueDateInLS(
+              dataOfLocalStorage,
+              tableData,
+              startDate.toString().slice(0, 15)
+            );
           }}
         />
       )}

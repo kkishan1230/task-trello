@@ -55,19 +55,21 @@ function TitlesHead() {
 
   // functions
   const addToLS = (dt) => {
-    var x = titleText;
     var y = { TitleName: titleText };
     y["id"] = dt.addCardTitles.length + 1;
-    dt.addCardTitles.push(y);
-    var LsData = JSON.parse(localStorage.getItem("Titles"));
-    LsData[dt.Id - 1] = dt;
-    localStorage.setItem("Titles", JSON.stringify(LsData));
+    var x = JSON.parse(localStorage.getItem("Titles"));
+    x[dt.Id - 1].addCardTitles.push(y);
+    localStorage.setItem("Titles", JSON.stringify(x));
+    setData1(x);
+    // dt.addCardTitles.push(y);
+    // var LsData = JSON.parse(localStorage.getItem("Titles"));
+    // LsData[dt.Id - 1] = dt;
+    // localStorage.setItem("Titles", JSON.stringify(LsData));
   };
 
   const addCardTitlesToLS = (dt) => {
-    data1[dt.Id - 1] = dt;
-    localStorage.setItem("Titles", JSON.stringify(data1));
-    setData1(data1);
+    // data1[dt.Id - 1] = dt;
+    // localStorage.setItem("Titles", JSON.stringify(data1));
   };
 
   return (
@@ -174,7 +176,8 @@ function TitlesHead() {
                           variant="contained"
                           onClick={() => {
                             dispatch(addButton());
-                            addCardTitlesToLS(dt);
+                            // console.log(dt);
+                            // addCardTitlesToLS(dt);
                             addToLS(dt);
                             dispatch(
                               dataLocal(
@@ -202,7 +205,6 @@ function TitlesHead() {
                           setState(!state);
                           dispatch(addButton());
                           setKey(dt.Id);
-                          console.log(dt);
                         }}
                         sx={{
                           padding: "0",

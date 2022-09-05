@@ -5,7 +5,7 @@ export const SliceActions = createSlice({
   initialState: {
     show: true,
     titles: null,
-    addTitle: "",
+    addTitle: null,
     allData: null,
     addButton: false,
     addCardTitle: {},

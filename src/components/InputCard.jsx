@@ -26,6 +26,7 @@ function InputCard() {
 
       <br />
       <Button
+        disabled={Boolean(selector) ? false : true}
         variant="contained"
         sx={{
           display: "inline",

@@ -5,9 +5,9 @@ import {
   VideoLabelOutlined,
 } from "@mui/icons-material";
 import { Button, IconButton, TextField, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { darkFilter, dataLocal } from "../../allStates/SliceActions";
+import { darkFilter } from "../../allStates/SliceActions";
 import AddOptions from "./AddOptions";
 import {
   AddDesPaper,
@@ -254,11 +254,3 @@ function ModalContents() {
 }
 
 export default ModalContents;
-
-// Boolean(
-//   dataLocal[contentsId - 1].addCardTitles[subContentId - 1]
-//     .TitleDescription
-// )
-//   ? dataLocal[contentsId - 1].addCardTitles[subContentId - 1]
-//       .TitleDescription
-//   : "Add a more description for card title"

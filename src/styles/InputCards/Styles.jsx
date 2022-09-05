@@ -11,6 +11,7 @@ export const CardContainer = styled(Box)({
   display: "flex",
   flexDirection: "column",
   gap: "1rem",
+  justifyContent: "space-between",
 });
 
 export const AddCardButton = styled(Button)({

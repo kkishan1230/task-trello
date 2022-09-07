@@ -34,7 +34,7 @@ function TitlesHead() {
   const dispatch = useDispatch();
 
   // selectors
-  const dataLocal = useSelector((state) => {
+  const dataLocal_data = useSelector((state) => {
     return state.inputStates.dataLocal;
   });
 
@@ -76,14 +76,14 @@ function TitlesHead() {
     dispatch(Unique_Id());
     var x = JSON.parse(localStorage.getItem("Titles"));
     x[dt.Id - 1].addCardTitles.push(y);
+    dispatch(dataLocal(x));
     localStorage.setItem("Titles", JSON.stringify(x));
     setData1(x);
-    localStorage.setItem("Unique_Id", Titles_UniqueId);
   };
 
   const setdeadLine = (id1, id2) => {
-    if (dataLocal !== null && dataLocal !== undefined) {
-      dataLocal[id1 - 1].addCardTitles.forEach((element) => {
+    if (dataLocal_data !== null && dataLocal_data !== undefined) {
+      dataLocal_data[id1 - 1].addCardTitles.forEach((element) => {
         if (element.dueDate !== undefined && element.id === id2) {
           dispatch(deadLine(element.dueDate));
         }
@@ -93,9 +93,28 @@ function TitlesHead() {
 
   const handleDragEnd = (array, result) => {
     // console.log(array, result);
+    if (!result.destination) return;
+    var arr = JSON.stringify(array);
+    arr = JSON.parse(arr);
+    var dest = result.destination;
+    var source_id = result.source;
     if (result.destination.droppableId === result.source.droppableId) {
-      console.log("working");
+      var [items] = arr[dest.droppableId - 1].addCardTitles.splice(
+        source_id.index,
+        1
+      );
+      arr[dest.droppableId - 1].addCardTitles.splice(dest.index, 0, items);
+    } else {
+      arr[dest.droppableId - 1].addCardTitles.splice(
+        dest.index,
+        0,
+        arr[source_id.droppableId - 1].addCardTitles[source_id.index]
+      );
+      arr[source_id.droppableId - 1].addCardTitles.splice(source_id.index, 1);
     }
+    setData1(arr);
+    localStorage.setItem("Titles", JSON.stringify(arr));
+    dispatch(dataLocal(arr));
   };
 
   return (
@@ -112,10 +131,10 @@ function TitlesHead() {
 
         <DragDropContext onDragEnd={(result) => handleDragEnd(data1, result)}>
           <CardContainerFlex>
-            {data1.map((dt) => {
+            {data1.map((dt, index) => {
               return (
-                <form key={dt.Id.toString()}>
-                  <Droppable droppableId={`${dt.Id}`}>
+                <form key={dt.Id}>
+                  <Droppable droppableId={`${dt.Id}`} index={index}>
                     {(provided) => (
                       <CardContainer
                         {...provided.droppableProps}
@@ -144,7 +163,7 @@ function TitlesHead() {
                         {dt.addCardTitles.map((data, index) => {
                           return (
                             <Draggable
-                              key={index}
+                              key={data.id}
                               draggableId={`${data.id}`}
                               index={index}
                             >
@@ -158,7 +177,6 @@ function TitlesHead() {
                                   ref={provided.innerRef}
                                   {...provided.dragHandleProps}
                                 >
-                                  {provided.placeholder}
                                   <Paper
                                     onClick={(el) => {
                                       dispatch(
@@ -188,6 +206,7 @@ function TitlesHead() {
                             </Draggable>
                           );
                         })}
+                        {provided.placeholder}
 
                         {addCard && key === dt.Id ? (
                           <>
@@ -221,10 +240,10 @@ function TitlesHead() {
                                       dispatch(addButton());
                                       setTitleText(null);
                                       addToLS(dt);
-                                      var x = JSON.parse(
-                                        localStorage.getItem("Titles")
-                                      );
-                                      dispatch(dataLocal(x));
+                                      // var x = JSON.parse(
+                                      //   localStorage.getItem("Titles")
+                                      // );
+                                      // dispatch(dataLocal(x));
                                     }}
                                   >
                                     Add Card
@@ -245,7 +264,6 @@ function TitlesHead() {
                           </>
                         ) : (
                           <>
-                            {provided.placeholder}
                             <AddCardButton
                               startIcon={<Add />}
                               onClick={() => {

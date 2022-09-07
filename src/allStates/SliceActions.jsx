@@ -76,6 +76,7 @@ export const SliceActions = createSlice({
     },
     Unique_Id: (state) => {
       state.Unique_Id = state.Unique_Id + 1;
+      localStorage.setItem("Unique_Id", state.Unique_Id);
     },
   },
 });

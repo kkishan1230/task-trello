@@ -1,5 +1,5 @@
 import { Add } from "@mui/icons-material";
-import { Button, ThemeProvider } from "@mui/material";
+import { ThemeProvider } from "@mui/material";
 import "./App.css";
 import InputCard from "./components/InputCard";
 import {
@@ -10,7 +10,7 @@ import {
 } from "./styles/Style";
 import { theme } from "./styles/theme/Theme";
 import { useSelector, useDispatch } from "react-redux";
-import { show, titleData } from "../src/allStates/SliceActions";
+import { show } from "../src/allStates/SliceActions";
 import { useEffect } from "react";
 import CompletedTitles from "./components/completedTitles";
 
@@ -19,12 +19,6 @@ var data = [];
 //
 
 function App() {
-  const darkFilter = useSelector((state) => {
-    return state.inputStates.darkFilter;
-  });
-  const selec = useSelector((state) => {
-    return state.inputStates.titles;
-  });
   useEffect(() => {
     if (
       localStorage.getItem("Titles") === null ||
@@ -32,6 +26,7 @@ function App() {
     ) {
       data = JSON.stringify(data);
       localStorage.setItem("Titles", data);
+      localStorage.setItem("Unique_Id", 1);
     }
   }, []);
 

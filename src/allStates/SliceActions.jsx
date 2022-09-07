@@ -20,6 +20,7 @@ export const SliceActions = createSlice({
     contentId: null,
     subContentId: null,
     dataLocal: JSON.parse(localStorage.getItem("Titles")),
+    Unique_Id: Number(localStorage.getItem("Unique_Id")),
   },
   reducers: {
     show: (state) => {
@@ -73,6 +74,9 @@ export const SliceActions = createSlice({
     dataLocal: (state, action) => {
       state.dataLocal = action.payload;
     },
+    Unique_Id: (state) => {
+      state.Unique_Id = state.Unique_Id + 1;
+    },
   },
 });
 
@@ -93,5 +97,6 @@ export const {
   contentId,
   subContentId,
   dataLocal,
+  Unique_Id,
 } = SliceActions.actions;
 export default SliceActions.reducer;

@@ -23,17 +23,20 @@ import {
   contentId,
   subContentId,
   dataLocal,
+  Unique_Id,
+  deadLine,
 } from "../../allStates/SliceActions";
 import ModalContents from "../ModalContents/ModalContents";
 import { FlexOnly, ModalFlex } from "../ModalContents/ModalContentsStyles";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
 function TitlesHead() {
-  // UUID
-  // const uu_id = uuid();
-  //
-
   const dispatch = useDispatch();
+
+  // selectors
+  const dataLocal = useSelector((state) => {
+    return state.inputStates.dataLocal;
+  });
 
   const darkFilters = useSelector((state) => {
     return state.inputStates.darkFilter;
@@ -46,6 +49,12 @@ function TitlesHead() {
     return state.inputStates.addButton;
   });
 
+  const Titles_UniqueId = useSelector((state) => {
+    return state.inputStates.Unique_Id;
+  });
+
+  // UseEffect
+
   useEffect(() => {
     if (localStorage.getItem === null) {
       localStorage.setItem("Titles", JSON.stringify([]));
@@ -53,6 +62,8 @@ function TitlesHead() {
       setData1(JSON.parse(localStorage.getItem("Titles")));
     }
   }, [selector]);
+
+  // all states
   const [state, setState] = useState(false);
   const [data1, setData1] = useState([]);
   const [key, setKey] = useState(0);
@@ -61,18 +72,30 @@ function TitlesHead() {
   // functions
   const addToLS = (dt) => {
     var y = { TitleName: titleText };
-    y["id"] = dt.addCardTitles.length + 1;
+    y["id"] = Titles_UniqueId;
+    dispatch(Unique_Id());
     var x = JSON.parse(localStorage.getItem("Titles"));
     x[dt.Id - 1].addCardTitles.push(y);
     localStorage.setItem("Titles", JSON.stringify(x));
     setData1(x);
+    localStorage.setItem("Unique_Id", Titles_UniqueId);
+  };
+
+  const setdeadLine = (id1, id2) => {
+    if (dataLocal !== null && dataLocal !== undefined) {
+      dataLocal[id1 - 1].addCardTitles.forEach((element) => {
+        if (element.dueDate !== undefined && element.id === id2) {
+          dispatch(deadLine(element.dueDate));
+        }
+      });
+    }
   };
 
   const handleDragEnd = (array, result) => {
-    console.log(array, result);
-    var x = JSON.stringify(array);
-    x = JSON.parse(x);
-    console.log(x[Number(result.destination.droppableId) - 1].addCardTitles);
+    // console.log(array, result);
+    if (result.destination.droppableId === result.source.droppableId) {
+      console.log("working");
+    }
   };
 
   return (
@@ -86,7 +109,6 @@ function TitlesHead() {
         >
           <ModalContents />
         </Modal>
-        {/* <Button onClick={() => console.log(data1[contentId-1])}>Check </Button> */}
 
         <DragDropContext onDragEnd={(result) => handleDragEnd(data1, result)}>
           <CardContainerFlex>
@@ -123,7 +145,7 @@ function TitlesHead() {
                           return (
                             <Draggable
                               key={index}
-                              draggableId={`${data.id}${dt.Id}`}
+                              draggableId={`${data.id}`}
                               index={index}
                             >
                               {(provided) => (
@@ -136,23 +158,19 @@ function TitlesHead() {
                                   ref={provided.innerRef}
                                   {...provided.dragHandleProps}
                                 >
+                                  {provided.placeholder}
                                   <Paper
                                     onClick={(el) => {
                                       dispatch(
                                         dataFromClick(el.target.textContent)
                                       );
+
                                       dispatch(darkFilter());
                                       dispatch(titleData(data));
                                       dispatch(dataOfTable(dt));
                                       dispatch(contentId(dt.Id));
-                                      dispatch(subContentId(data.id));
-                                      dispatch(
-                                        dataLocal(
-                                          JSON.parse(
-                                            localStorage.getItem("Titles")
-                                          )
-                                        )
-                                      );
+                                      dispatch(subContentId(data));
+                                      setdeadLine(dt.Id, data.id);
                                     }}
                                     sx={{
                                       backgroundColor: "white",
@@ -170,6 +188,7 @@ function TitlesHead() {
                             </Draggable>
                           );
                         })}
+
                         {addCard && key === dt.Id ? (
                           <>
                             <Paper>
@@ -202,13 +221,10 @@ function TitlesHead() {
                                       dispatch(addButton());
                                       setTitleText(null);
                                       addToLS(dt);
-                                      dispatch(
-                                        dataLocal(
-                                          JSON.parse(
-                                            localStorage.getItem("Titles")
-                                          )
-                                        )
+                                      var x = JSON.parse(
+                                        localStorage.getItem("Titles")
                                       );
+                                      dispatch(dataLocal(x));
                                     }}
                                   >
                                     Add Card

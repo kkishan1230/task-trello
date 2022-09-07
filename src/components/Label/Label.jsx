@@ -16,14 +16,17 @@ function Label() {
   // Functions
   const addLabel = (e) => {
     var x = JSON.parse(localStorage.getItem("Titles"));
-    if (Boolean(x[contentId - 1].addCardTitles[subContentId - 1].priority)) {
-      x[contentId - 1].addCardTitles[subContentId - 1].priority = e;
-    } else {
-      x[contentId - 1].addCardTitles[subContentId - 1]["priority"] = e;
-    }
-    // console.log(x[contentId - 1].addCardTitles[subContentId - 1].priority);
-    localStorage.setItem("Titles", JSON.stringify(x));
+    x[contentId - 1].addCardTitles.forEach((element) => {
+      if (element.priority !== undefined && element.id === subContentId.id) {
+        element.priority = e;
+        console.log(subContentId.id);
+      } else if (element.id === subContentId.id) {
+        element["priority"] = e;
+      }
+    });
+
     dispatch(dataLocal(x));
+    localStorage.setItem("Titles", JSON.stringify(x));
     dispatch(openLabelModal());
   };
 

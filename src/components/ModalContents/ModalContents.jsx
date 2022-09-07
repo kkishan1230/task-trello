@@ -6,9 +6,16 @@ import {
 } from "@mui/icons-material";
 import { Button, IconButton, TextField, Typography } from "@mui/material";
 import React, { useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { darkFilter } from "../../allStates/SliceActions";
+import {
+  contentId,
+  darkFilter,
+  deadLine,
+  dataLocal,
+} from "../../allStates/SliceActions";
 import AddOptions from "./AddOptions";
+import Members from "./Members";
 import {
   AddDesPaper,
   DeadlineButton,
@@ -22,9 +29,12 @@ import {
 } from "./ModalContentsStyles";
 
 function ModalContents() {
-  // const dispatch = useDispatch();
-
+  const dispatch = useDispatch();
   // Selectors
+
+  const memberMail = useSelector((state) => {
+    return state.inputStates.memberMail;
+  });
 
   const datafromClick = useSelector((state) => {
     return state.inputStates.dataFromClick;
@@ -38,34 +48,44 @@ function ModalContents() {
     return state.inputStates.subContentId;
   });
 
-  const dataLocal = useSelector((state) => {
+  const dataLocal_data = useSelector((state) => {
     return state.inputStates.dataLocal;
+  });
+
+  const deadDate = useSelector((state) => {
+    return state.inputStates.deadLine;
   });
   // Functions
 
   const addDescToLS = () => {
     var x = JSON.parse(localStorage.getItem("Titles"));
-    if (
-      Boolean(
-        x[contentsId - 1].addCardTitles[subContentId - 1].TitleDescription
-      )
-    ) {
-      x[contentsId - 1].addCardTitles[subContentId - 1].TitleDescription =
-        descText;
-    } else {
-      x[contentsId - 1].addCardTitles[subContentId - 1]["TitleDescription"] =
-        descText;
+    for (var a = 0; a < x[contentsId - 1].addCardTitles.length; a++) {
+      if (x[contentsId - 1].addCardTitles[a].id === subContentId.id) {
+        x[contentsId - 1].addCardTitles[a]["cardDescription"] = descText;
+        dispatch(dataLocal(x));
+        localStorage.setItem("Titles", JSON.stringify(x));
+        console.log(x);
+        return;
+      }
     }
-    localStorage.setItem("Titles", JSON.stringify(x));
   };
 
   // All states
   const [state, setState] = useState(false);
-  const dispatch = useDispatch();
-  const [descText, setDescText] = useState(null);
-
-  var LabelPriorityIndicator =
-    dataLocal[contentsId - 1].addCardTitles[subContentId - 1].priority;
+  const [descText, setDescText] = useState(() => {
+    for (
+      var a = 0;
+      a < dataLocal_data[contentsId - 1].addCardTitles.length;
+      a++
+    ) {
+      if (
+        dataLocal_data[contentsId - 1].addCardTitles[a].id === subContentId.id
+      ) {
+        return dataLocal_data[contentsId - 1].addCardTitles[a].cardDescription;
+      }
+    }
+  });
+  const [Arr, setArr] = useState([]);
 
   return (
     <ModalContentBox>
@@ -98,79 +118,87 @@ function ModalContents() {
         marginLeft={"50px"}
         marginTop="20px"
       >
-        {Boolean(
-          dataLocal[contentsId - 1].addCardTitles[subContentId - 1].members
-        ) && (
-          <FlexOnly flexDirection={"column"}>
-            <Typography fontWeight={"bold"}>Members</Typography>
-            <FlexOnly gap="5px ">
-              {dataLocal[contentsId - 1].addCardTitles[subContentId - 1].members
-                .length > 0 &&
-                dataLocal[contentsId - 1].addCardTitles[
-                  subContentId - 1
-                ].members.map((mem) => {
-                  return (
-                    <MembersButton
-                      size="small"
-                      variant="contained"
-                      sx={{
-                        textAlign: "center",
-                        color: "white",
-                        background: "purple",
-                      }}
-                    >
-                      {mem[0]}
-                    </MembersButton>
-                  );
+        {dataLocal_data[contentsId - 1].addCardTitles.map((x) => {
+          if (x.member !== undefined && x.id === subContentId.id) {
+            return (
+              <FlexOnly flexDirection={"column"}>
+                <Typography fontWeight={"bold"}>Members</Typography>
+                {dataLocal_data[contentsId - 1].addCardTitles.map((dt) => {
+                  if (dt.member !== undefined && dt.id === subContentId.id) {
+                    return (
+                      <FlexOnly gap="5px">
+                        {dt.member.map((mem) => {
+                          return (
+                            <MembersButton
+                              size="small"
+                              variant="contained"
+                              sx={{
+                                textAlign: "center",
+                                color: "white",
+                                background: "purple",
+                              }}
+                            >
+                              {mem[0]}
+                            </MembersButton>
+                          );
+                        })}
+                      </FlexOnly>
+                    );
+                  }
                 })}
-            </FlexOnly>
-          </FlexOnly>
-        )}
-        {Boolean(
-          dataLocal[contentsId - 1].addCardTitles[subContentId - 1].dueDate
-        ) && (
-          <FlexOnly flexDirection={"column"}>
-            <Typography fontWeight={"bold"}>Due Date</Typography>
-            <DeadlineButton>
-              {
-                dataLocal[contentsId - 1].addCardTitles[subContentId - 1]
-                  .dueDate
-              }
-            </DeadlineButton>
-          </FlexOnly>
-        )}
+              </FlexOnly>
+            );
+          }
+        })}
 
-        {Boolean(
-          dataLocal[contentsId - 1].addCardTitles[subContentId - 1].priority
-        ) && (
-          <FlexOnly flexDirection={"column"}>
-            <Typography fontWeight={"bold"}>Priority</Typography>
-            <PriorityLabel
-              sx={{
-                backgroundColor:
-                  LabelPriorityIndicator === "Urgent"
-                    ? "red"
-                    : LabelPriorityIndicator === "Medium"
-                    ? "orange"
-                    : "green",
-                "&:hover": {
-                  backgroundColor:
-                    LabelPriorityIndicator === "Urgent"
-                      ? "red"
-                      : LabelPriorityIndicator === "Medium"
-                      ? "orange"
-                      : "green",
-                  opacity: "0.7",
-                },
-              }}
-            >
-              {
-                dataLocal[contentsId - 1].addCardTitles[subContentId - 1]
-                  .priority
-              }
-            </PriorityLabel>
-          </FlexOnly>
-        )}
+        {dataLocal_data[contentsId - 1].addCardTitles.map((el) => {
+          if (
+            el.dueDate !== undefined &&
+            el.dueDate !== null &&
+            el.id === subContentId.id
+          ) {
+            console.log(el.dueDate);
+            return (
+              <FlexOnly flexDirection={"column"}>
+                <Typography fontWeight={"bold"}>Due Date</Typography>
+                <DeadlineButton>
+                  {deadDate === null ? el.dueDate : deadDate}
+                </DeadlineButton>
+              </FlexOnly>
+            );
+          }
+        })}
+
+        {dataLocal_data[contentsId - 1].addCardTitles.map((elm) => {
+          if (elm.priority !== undefined && elm.id === subContentId.id) {
+            return (
+              <FlexOnly flexDirection={"column"}>
+                <Typography fontWeight={"bold"}>Priority</Typography>
+                <PriorityLabel
+                  sx={{
+                    backgroundColor:
+                      elm.priority === "Urgent"
+                        ? "red"
+                        : elm.priority === "Medium"
+                        ? "orange"
+                        : "green",
+                    "&:hover": {
+                      backgroundColor:
+                        elm.priority === "Urgent"
+                          ? "red"
+                          : elm.priority === "Medium"
+                          ? "orange"
+                          : "green",
+                      opacity: "0.7",
+                    },
+                  }}
+                >
+                  {elm.priority}
+                </PriorityLabel>
+              </FlexOnly>
+            );
+          }
+        })}
       </FlexOnly>
       <ModalFlex>
         <ModalFlex gap="20px">
@@ -193,14 +221,11 @@ function ModalContents() {
               <FlexOnly flexDirection="column" gap="10px">
                 <TextAreaForDesc
                   placeholder={
-                    Boolean(
-                      dataLocal[contentsId - 1].addCardTitles[subContentId - 1]
-                        .TitleDescription
-                    )
-                      ? dataLocal[contentsId - 1].addCardTitles[
-                          subContentId - 1
-                        ].TitleDescription
-                      : "Add a more description for the card title..."
+                    Boolean(descText)
+                      ? descText
+                      : Boolean(subContentId.cardDescription)
+                      ? subContentId.cardDescription
+                      : "Add a more description for card title"
                   }
                   autoFocus
                   onChange={(el) => [setDescText(el.target.value)]}
@@ -234,13 +259,8 @@ function ModalContents() {
                 >
                   {Boolean(descText)
                     ? descText
-                    : Boolean(
-                        dataLocal[contentsId - 1].addCardTitles[
-                          subContentId - 1
-                        ].TitleDescription
-                      )
-                    ? dataLocal[contentsId - 1].addCardTitles[subContentId - 1]
-                        .TitleDescription
+                    : Boolean(subContentId.cardDescription)
+                    ? subContentId.cardDescription
                     : "Add a more description for card title"}
                 </Typography>
               </AddDesPaper>
@@ -254,3 +274,30 @@ function ModalContents() {
 }
 
 export default ModalContents;
+
+{
+  // <FlexOnly flexDirection={"column"}>
+  //   <Typography fontWeight={"bold"}>Priority</Typography>
+  //   <PriorityLabel
+  //     sx={{
+  //       backgroundColor:
+  //         element.priority === "Urgent"
+  //           ? "red"
+  //           : element.priority === "Medium"
+  //           ? "orange"
+  //           : "green",
+  //       "&:hover": {
+  //         backgroundColor:
+  //           element.priority === "Urgent"
+  //             ? "red"
+  //             : element.priority === "Medium"
+  //             ? "orange"
+  //             : "green",
+  //         opacity: "0.7",
+  //       },
+  //     }}
+  //   >
+  //     {element.priority}
+  //   </PriorityLabel>
+  // </FlexOnly>;
+}

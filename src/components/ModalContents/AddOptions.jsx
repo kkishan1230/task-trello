@@ -3,7 +3,7 @@ import {
   PersonOutlineOutlined,
   StyleOutlined,
 } from "@mui/icons-material";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import { FlexOnly, OptionsButtons } from "./ModalContentsStyles";
 import "react-datepicker/dist/react-datepicker.min.css";
 import DatePicker from "react-datepicker";
@@ -11,10 +11,14 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   deadLine,
   openLabelModal,
+  contentId,
+  subContentId,
   dataLocal,
+  memberMail,
 } from "../../allStates/SliceActions";
 import { Button, Popover, TextField } from "@mui/material";
 import Label from "../Label/Label";
+import { useEffect } from "react";
 
 function AddOptions() {
   const dispatch = useDispatch();
@@ -26,6 +30,17 @@ function AddOptions() {
   const [deadLineState, setDeadLineState] = useState(new Date());
 
   // Selectors
+  const memMail = useSelector((state) => {
+    return state.inputStates.memberMail;
+  });
+  const subContentsId = useSelector((state) => {
+    return state.inputStates.subContentId;
+  });
+
+  const contentsId = useSelector((state) => {
+    return state.inputStates.contentId;
+  });
+
   const membersAllmail = useSelector((state) => {
     return state.inputStates.allMembers;
   });
@@ -45,32 +60,49 @@ function AddOptions() {
     return state.inputStates.deadLine;
   });
 
+  const dataLocal_data = useSelector((state) => {
+    return state.inputStates.dataLocal;
+  });
+
   // functions
 
-  const setDueDateInLS = (smallObj, bigObj, deadDate) => {
-    var x = JSON.parse(localStorage.getItem("Titles"));
-    if (Boolean(x[bigObj.Id - 1].addCardTitles[smallObj.id - 1].dueDate)) {
-      x[bigObj.Id - 1].addCardTitles[smallObj.id - 1].dueDate = deadDate;
-    } else {
-      x[bigObj.Id - 1].addCardTitles[smallObj.id - 1]["dueDate"] = deadDate;
-    }
-    // console.log(x[bigObj.Id - 1].addCardTitles[smallObj.id - 1].dueDate);
+  const setDueDateInLS = (e) => {
+    var x = JSON.stringify(dataLocal_data);
+    x = JSON.parse(x);
+    x[contentsId - 1].addCardTitles.forEach((element) => {
+      console.log(subContentsId.id);
+      if (element.duDate === undefined && element.id === subContentsId.id) {
+        element["dueDate"] = e;
+      } else if (element.id === subContentsId.id) {
+        element.dueDate = e;
+      }
+    });
+
     localStorage.setItem("Titles", JSON.stringify(x));
     dispatch(dataLocal(x));
   };
 
-  const addMem = (LsData, tableData) => {
+  const addMem = () => {
     var x = JSON.parse(localStorage.getItem("Titles"));
-    var y = x[tableData.Id - 1].addCardTitles[LsData.id - 1];
-    if (Boolean(y.members)) {
-      y.members.push(mail);
-    } else {
-      y["members"] = [];
-      y.members.push(mail);
+    for (var a = 0; a < x[contentsId - 1].addCardTitles.length; a++) {
+      if (
+        Boolean(x[contentsId - 1].addCardTitles[a].id == subContentsId.id) &&
+        Boolean(x[contentsId - 1].addCardTitles[a].member)
+      ) {
+        x[contentsId - 1].addCardTitles[a].member.push(memMail);
+        localStorage.setItem("Titles", JSON.stringify(x));
+        dispatch(dataLocal(x));
+        return;
+      } else if (
+        Boolean(x[contentsId - 1].addCardTitles[a].id == subContentsId.id)
+      ) {
+        x[contentsId - 1].addCardTitles[a]["member"] = [];
+        x[contentsId - 1].addCardTitles[a].member.push(memMail);
+        localStorage.setItem("Titles", JSON.stringify(x));
+        dispatch(dataLocal(x));
+        return;
+      }
     }
-    x[tableData.Id - 1].addCardTitles[LsData.id - 1] = y;
-    dispatch(dataLocal(x));
-    localStorage.setItem("Titles", JSON.stringify(x));
   };
 
   return (
@@ -91,7 +123,7 @@ function AddOptions() {
             placeholder="Member Mail"
             autoFocus
             onChange={(el) => {
-              setMail(el.target.value);
+              dispatch(memberMail(el.target.value));
             }}
           />
           <Button
@@ -99,9 +131,9 @@ function AddOptions() {
             variant="contained"
             onClick={(el) => {
               setAddMember(!addMember);
-              addMem(dataOfLocalStorage, tableData);
+              addMem();
             }}
-            disabled={mail.length === 0 ? true : false}
+            disabled={memMail.length === 0 ? true : false}
           >
             Add Member
           </Button>
@@ -150,15 +182,10 @@ function AddOptions() {
           minDate={new Date()}
           open={!state}
           onChange={(startDate) => {
-            var dataLS = JSON.parse(localStorage.getItem("Titles"));
             dispatch(deadLine(`${startDate.toString().slice(0, 15)}`));
             setDeadLineState(startDate.toString().slice(0, 15));
             setState(!state);
-            setDueDateInLS(
-              dataOfLocalStorage,
-              tableData,
-              startDate.toString().slice(0, 15)
-            );
+            setDueDateInLS(startDate.toString().slice(0, 15));
           }}
         />
       )}
